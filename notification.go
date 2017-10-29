@@ -60,6 +60,9 @@ func (o osxNotificator) push(title string, text string, timeout int, soundPath s
 	if term_notif == true {
 		return exec.Command("terminal-notifier", "-title", o.AppName, "-message", text, "-subtitle", title, "-timeout", strconv.Itoa(timeout), "-open", clickURL, "-sound", soundPath)
 	} else if os_version_check == true {
+		title = strings.Replace(title, `"`, `\"`,  -1)
+		text = strings.Replace(text, `"`, `\"`,  -1)
+		
 		notification := fmt.Sprintf("display notification \"%s\" with title \"%s\" subtitle \"%s\"", text, o.AppName, title)
 		return exec.Command("osascript", "-e", notification)
 	}
@@ -146,7 +149,7 @@ func CheckMacOSVersion() bool {
 	cmd := exec.Command("sw_vers", "-productVersion")
 	check, _ := cmd.Output()
 
-	version := strings.Split(string(check), ".")
+	version := strings.Split(strings.TrimSpace(string(check)), ".")
 
 	// semantic versioning of macOS
 
